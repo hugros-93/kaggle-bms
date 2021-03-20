@@ -133,3 +133,6 @@ bms-molecular-translation/
 
 # Settings
 .vscode/
+
+# Weights 
+outputs/
