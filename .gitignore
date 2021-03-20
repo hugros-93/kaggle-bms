@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Kaggle data 
+bms-molecular-translation/
+
+# Settings
+.vscode/
