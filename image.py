@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from Levenshtein import distance
 from tensorflow.image import resize
 
+
 def show_image(X):
     fig = px.imshow(X, binary_string=True)
     fig.update_layout(
@@ -35,6 +36,7 @@ class ImageSetObject:
         self.X = np.array(self.X)
         self.shape = self.X.shape
 
+
 class ImageObject:
     def __init__(self, name, path):
         self.name = name
@@ -51,13 +53,12 @@ class ImageObject:
         if self.shape[0] > self.shape[1]:
             self.X = np.swapaxes(self.X, 0, 1)
             self.shape = self.X.shape
-            
+
     def adjust(self):
-        new_x = self.X[:, np.where(self.X.sum(axis=0)>0)[0], :]
-        new_x = new_x[np.where(new_x.sum(axis=1)>0)[0], :, :]
+        new_x = self.X[:, np.where(self.X.sum(axis=0) > 0)[0], :]
+        new_x = new_x[np.where(new_x.sum(axis=1) > 0)[0], :, :]
         self.X = new_x
         self.shape = self.X.shape
-        
 
     def filter(self, d=2, r=0.15):
         X = self.X
@@ -71,5 +72,5 @@ class ImageObject:
 
     def resize(self, new_dim):
         self.X = resize(self.X, new_dim, preserve_aspect_ratio=False).numpy()
-        self.X[self.X>0] = 1.0
+        self.X[self.X > 0] = 1.0
         self.shape = self.X.shape
