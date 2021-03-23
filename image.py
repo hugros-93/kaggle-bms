@@ -17,7 +17,6 @@ def show_image(X):
     fig.update_yaxes(showticklabels=False)
     return fig
 
-
 class ImageSetObject:
     def __init__(self, list_names, list_paths):
         self.list_names = list_names
@@ -25,17 +24,16 @@ class ImageSetObject:
         self.X = []
         self.image_ids = [x.split('.')[0] for x in self.list_names]
 
-    def load_set(self, new_shape):
+    def prepare_data(self, new_shape, filtering=True, adjust=True):
         for i, name in enumerate(self.list_names):
             Image = ImageObject(name, self.list_paths[i])
             Image.load_picture()
-            Image.filter()
-            Image.adjust()
+            if filtering: Image.filter()
+            if adjust: Image.adjust()
             Image.resize(new_shape)
             self.X.append(Image.X)
         self.X = np.array(self.X)
         self.shape = self.X.shape
-
 
 class ImageObject:
     def __init__(self, name, path):
@@ -49,17 +47,6 @@ class ImageObject:
         self.X = 1.0 - self.X
         self.shape = self.X.shape
 
-    def rotate(self):
-        if self.shape[0] > self.shape[1]:
-            self.X = np.swapaxes(self.X, 0, 1)
-            self.shape = self.X.shape
-
-    def adjust(self):
-        new_x = self.X[:, np.where(self.X.sum(axis=0) > 0)[0], :]
-        new_x = new_x[np.where(new_x.sum(axis=1) > 0)[0], :, :]
-        self.X = new_x
-        self.shape = self.X.shape
-
     def filter(self, d=2, r=0.15):
         X = self.X
         new_X = X.copy()
@@ -69,6 +56,12 @@ class ImageObject:
                 if len(x[x == 1.0]) < r*(2*d)**2:
                     new_X[i-d:i+d, j-d:j+d] = 0.0
         self.X = new_X
+
+    def adjust(self):
+        new_x = self.X[:, np.where(self.X.sum(axis=0) > 0)[0], :]
+        new_x = new_x[np.where(new_x.sum(axis=1) > 0)[0], :, :]
+        self.X = new_x
+        self.shape = self.X.shape
 
     def resize(self, new_dim):
         self.X = resize(self.X, new_dim, preserve_aspect_ratio=False).numpy()
