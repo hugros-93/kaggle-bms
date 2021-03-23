@@ -18,8 +18,6 @@ folders = '0123456789abcdef'
 random_state=0
 
 # Parameters
-epochs = 1 # 1000
-batch_size = 128
 lr=1e-3
 name=f'gsk'
 new_shape=[128, 128]
@@ -69,8 +67,8 @@ sample_submission = sample_submission.set_index('image_id')
 # Images data 
 dataset = 'test'
 
-for i in folders:
-    for j in folders:
+for i in tqdm(folders[0:1]):
+    for j in tqdm(folders[0:1]):
         for k in tqdm(folders):
 
             path = f'bms-molecular-translation/{dataset}/{i}/{j}/{k}/'
@@ -91,7 +89,9 @@ for i in folders:
             y_test_predict=get_text_from_predict(model, data_test, idx2char)
             y_test_predict=['InChI='+x for x in y_test_predict]
 
+            # Prepare df
             df_y_test_predict = pd.DataFrame([list_id, y_test_predict], index = ['image_id','InChI']).transpose().set_index('image_id')
-
             sample_submission.loc[df_y_test_predict.index, 'InChI'] = df_y_test_predict['InChI']
 
+            # Export
+            sample_submission.reset_index().to_csv('outputs/submission.csv', index=False)

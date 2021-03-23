@@ -18,7 +18,6 @@ random_state=0
 
 # Parameters
 epochs = 1 # 1000
-batch_size = 128
 lr=1e-3
 name=f'gsk'
 new_shape=[128, 128]
@@ -65,39 +64,38 @@ Train
 dataset = 'train'
 
 i = folders[0]
-j = folders[0]
+
 # for i in folders:
-#     for j in folders:
- 
-for k in tqdm(folders):
+for j in tqdm(folders):
+    for k in tqdm(folders):
 
-    path = f'bms-molecular-translation/{dataset}/{i}/{j}/{k}/'
+        path = f'bms-molecular-translation/{dataset}/{i}/{j}/{k}/'
 
-    # Files
-    list_names = os.listdir(path)
-    list_paths = [path for _ in list_names]
+        # Files
+        list_names = os.listdir(path)
+        list_paths = [path for _ in list_names]
 
-    # Image data
-    ImageSet = ImageSetObject(list_names, list_paths)
-    ImageSet.load_set(new_shape)
-    data = ImageSet.X
+        # Image data
+        ImageSet = ImageSetObject(list_names, list_paths)
+        ImageSet.load_set(new_shape)
+        data = ImageSet.X
 
-    # Text targets
-    list_id = [x.split('.')[0] for x in ImageSet.list_names]
-    targets = train_labels.loc[list_id, 'InChI'].values
-    targets = [[char2idx[x] for x in target] for target in targets]
-    targets = pad_sequences(targets, padding='post', maxlen=max_len)
+        # Text targets
+        list_id = [x.split('.')[0] for x in ImageSet.list_names]
+        targets = train_labels.loc[list_id, 'InChI'].values
+        targets = [[char2idx[x] for x in target] for target in targets]
+        targets = pad_sequences(targets, padding='post', maxlen=max_len)
 
-    # Train
-    history = model.fit(data, targets, epochs=epochs, batch_size=batch_size, verbose=1)
-    model.save_weights(f'outputs/{name}.h5')
+        # Train
+        history = model.fit(data, targets, epochs=epochs, batch_size=len(data), verbose=1)
+        model.save_weights(f'outputs/{name}.h5')
 
-    # Score 
-    y_true=[''.join([idx2char[y] for y in yy]) for yy in targets]
-    y_predict=get_text_from_predict(model, data, idx2char)
+        # Score 
+        y_true=[''.join([idx2char[y] for y in yy]) for yy in targets]
+        y_predict=get_text_from_predict(model, data, idx2char)
 
 # Last train score
-print(f"\t> Score: {score(y_true, y_predict)}")
+print(f"\t> Last train score: {score(y_true, y_predict)}")
 
 '''
 Validation
@@ -106,11 +104,9 @@ Validation
 # Images data 
 dataset = 'train'
 
-i = folders[0]
-j = folders[1]
+i = folders[1]
+j = folders[0]
 k = folders[0]
-
-print(f"### {i} - {j} - {k} ###")
 
 path = f'bms-molecular-translation/{dataset}/{i}/{j}/{k}/'
 
@@ -132,4 +128,4 @@ targets = pad_sequences(targets, padding='post', maxlen=max_len)
 # Predict
 y_val_true=[''.join([idx2char[int(y)] for y in yy]) for yy in targets]
 y_val_predict=get_text_from_predict(model, data_validation, idx2char)
-print(f"\t> Score: {score(y_val_true, y_val_predict)}")
+print(f"\t> Validation score: {score(y_val_true, y_val_predict)}")
