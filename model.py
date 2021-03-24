@@ -113,7 +113,7 @@ class VAE(tf.keras.Model):
             ]
         )
 
-        dim=32
+        dim=int(input_shape_tuple[1]/4)
         self.generative_net = tf.keras.Sequential(
             [
                 InputLayer(input_shape=(latent_dim,)),
@@ -177,7 +177,7 @@ class VAE(tf.keras.Model):
         self.inference_net.save_weights(f"outputs/{self.name_model}_encoder.h5")
         self.generative_net.save_weights(f"outputs/{self.name_model}_decoder.h5")
 
-    def load_model(self, batch_size):
+    def load_model(self, batch_size=None):
         # load json and create model
         json_file = open(f"outputs/{self.name_model}_encoder.json", "r")
         loaded_model_json = json_file.read()
@@ -217,14 +217,11 @@ class VAE(tf.keras.Model):
         self.batch_size = batch_size
         self.train_elbo = math.inf
         self.nb_features = self.input_shape_tuple[1]
-        self.epoch = 0
-        self.train_elbo_list = []
 
         loss_before = 1e10
 
         for epoch in range(1, epochs + 1):
 
-            self.epoch = epoch
             train_loss = tf.keras.metrics.Mean()
 
             for train_x in train_dataset:
@@ -233,7 +230,6 @@ class VAE(tf.keras.Model):
                 train_loss(self.compute_loss(train_x))
 
             self.train_elbo = train_loss.result()
-            self.train_elbo_list.append(self.train_elbo)
-
             self._save_network()
+            # print(f"\t> {self.train_elbo}")
         return self
