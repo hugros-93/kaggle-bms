@@ -14,8 +14,8 @@ class TargetSet():
     def split_target(self):
         self.targets['targets'] = self.targets['InChI'].apply(lambda x: x.split('/'))
         self.targets['target_A'] = self.targets['targets'].apply(lambda x: x[1])
-        # self.targets['target_B'] = self.targets['targets'].apply(lambda x: x[2])
-        # self.targets['target_C'] = self.targets['targets'].apply(lambda x: x[3] if len(x)>3 else '')
+        self.targets['target_B'] = self.targets['targets'].apply(lambda x: x[2])
+        self.targets['target_C'] = self.targets['targets'].apply(lambda x: x[3] if len(x)>3 else '')
         del self.targets['targets']
         self.targets = self.targets.set_index("image_id")
         
