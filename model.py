@@ -231,5 +231,5 @@ class VAE(tf.keras.Model):
 
             self.train_elbo = train_loss.result()
             self._save_network()
-            # print(f"\t> {self.train_elbo}")
+            print(f"\t> {epoch} - {self.train_elbo}")
         return self
