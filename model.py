@@ -73,7 +73,7 @@ def score(y_true, y_predict):
 
 def loss_function(labels, logits):
     '''Adapted loss function'''
-    return sparse_categorical_crossentropy(labels, logits, from_logits=True)
+    return sparse_categorical_crossentropy(labels, logits, from_logits=False)
 
 # Reference: https://www.tensorflow.org/tutorials/generative/cvae
 
