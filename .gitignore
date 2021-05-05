@@ -137,5 +137,8 @@ bms-molecular-translation/
 # Weights 
 outputs/
 
+# Logs
+logs/
+
 # tenporary old files
 _old/
