@@ -5,8 +5,7 @@ import random
 import plotly.express as px
 import matplotlib.pyplot as plt
 from Levenshtein import distance
-from tensorflow.image import resize
-
+import tensorflow as tf
 
 def show_image(X):
     fig = px.imshow(X, binary_string=True)
@@ -64,6 +63,6 @@ class ImageObject:
         self.shape = self.X.shape
 
     def resize(self, new_dim):
-        self.X = resize(self.X, new_dim, preserve_aspect_ratio=False).numpy()
+        self.X = tf.image.resize(self.X, new_dim, preserve_aspect_ratio=False).numpy()
         self.X[self.X > 0] = 1.0
         self.shape = self.X.shape
